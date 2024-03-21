@@ -19,19 +19,17 @@ def encode(s):
     with open('changes.pickle', 'rb') as f:
         changes = pickle.load(f)
     encoded = list(s)
-    for i in changes:
-        if len(i[1])==1:
-            for j in range(len(encoded)):
-                if encoded[j] == i[1]:
-                    encoded[j] = i[0]
-        else:
-            j = 0
-            while j < len(encoded)-1:
-                if (encoded[j], encoded[j+1]) == i[1]:
-                    encoded[j] = i[0]
-                    encoded.pop(j+1)
-                else:
-                    j+=1
+    lookup = { changes[i][1]:i for i in range(len(changes)) }
+    i = 0
+    while i < len(encoded):
+        if isinstance(encoded[i], int):
+            if i < len(encoded)-1:
+                if lookup.get((encoded[i], encoded[i+1])):
+                    encoded[i] = lookup.get((encoded[i], encoded[i+1]))
+                    encoded.pop(i+1)
+                else: i += 1
+            else: break
+        else: encoded[i] = lookup[encoded[i]]
     return encoded
 
 def decode(encoded):
@@ -51,4 +49,4 @@ def decode(encoded):
 
 # train()
 
-print(decode(encode("""e4 e5 Nf3""")))
+# print(decode(encode("""e4 e5 Nf3""")))
