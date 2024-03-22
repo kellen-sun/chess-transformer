@@ -2,13 +2,13 @@ import torch
 import torch.nn as nn
 from torch.nn import functional as F
 from tokenizer import encode, decode
-import time
+import time, pickle
 
 with open('data.txt', 'r', encoding='utf-8') as f:
     text = f.read()
-
-chars = sorted(list(set(text)))
-vocab_size = len(chars)
+with open('changes.pickle', 'rb') as f:
+    changes = pickle.load(f)
+vocab_size = len(changes)
 data = torch.tensor(encode(text), dtype = torch.long)
 
 n = int(0.9*len(data))
